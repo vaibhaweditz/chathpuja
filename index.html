@@ -177,13 +177,13 @@ h1{font:400 clamp(54px,8vw,112px)/1.16 'Tiro Devanagari Hindi',serif;margin:8px 
   render();if(tracks.length)playTrack(active,true);
 
   const scene=document.querySelector('.scene'),hero=document.querySelector('.hero'),journey=document.getElementById('journey');
-  let currentTheme=null,manualOverride=false;
+  let currentTheme=null,manualOverride=false,adminThemeMode='auto';
   function autoTheme(now){return now.getHours()<12||(now.getHours()===12&&now.getMinutes()===0)?'sunrise':'sunset'}
   function applyTheme(theme){currentTheme=theme;scene.dataset.theme=theme;hero.dataset.theme=theme;hero.style.display='';hero.src=theme==='sunrise'?'./chhath-sunrise.png':'./chhath-reference.png';journey.textContent=theme==='sunrise'?'प्रातः का सफ़र':'संध्या का सफ़र'}
   hero.onerror=()=>{if(currentTheme==='sunrise'&&hero.getAttribute('src')==='chhath-sunrise.png')hero.style.display='none'};
   document.getElementById('themeToggle').onclick=()=>{manualOverride=true;applyTheme(currentTheme==='sunrise'?'sunset':'sunrise')};
-  const target=new Date(2026,10,15,0,0,0);
-  function updateClockAndCountdown(){const now=new Date();document.getElementById('clock').textContent=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});if(!manualOverride){const scheduled=autoTheme(now);if(scheduled!==currentTheme)applyTheme(scheduled)}const left=Math.max(0,target-now);if(left===0){document.getElementById('countdown').textContent='आज छठ पूजा है 🙏';return}const days=Math.floor(left/86400000),hours=Math.floor(left%86400000/3600000),minutes=Math.floor(left%3600000/60000),seconds=Math.floor(left%60000/1000);document.getElementById('countdown').textContent=days+' दिन · '+String(hours).padStart(2,'0')+' घंटे · '+String(minutes).padStart(2,'0')+' मिनट · '+String(seconds).padStart(2,'0')+' सेकंड'}
+  let target=new Date(2026,10,15,0,0,0);
+  function updateClockAndCountdown(){const now=new Date();document.getElementById('clock').textContent=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});if(!manualOverride){const scheduled=adminThemeMode==='auto'?autoTheme(now):adminThemeMode;if(scheduled!==currentTheme)applyTheme(scheduled)}const left=Math.max(0,target-now);if(left===0){document.getElementById('countdown').textContent='आज छठ पूजा है 🙏';return}const days=Math.floor(left/86400000),hours=Math.floor(left%86400000/3600000),minutes=Math.floor(left%3600000/60000),seconds=Math.floor(left%60000/1000);document.getElementById('countdown').textContent=days+' दिन · '+String(hours).padStart(2,'0')+' घंटे · '+String(minutes).padStart(2,'0')+' मिनट · '+String(seconds).padStart(2,'0')+' सेकंड'}
   updateClockAndCountdown();setInterval(updateClockAndCountdown,1000);
   const overlay=document.getElementById('supportOverlay'),openSupport=document.getElementById('openSupport'),closeSupport=document.getElementById('closeSupport'),qr=document.getElementById('supportQr'),qrPlaceholder=document.getElementById('qrPlaceholder'),languageToggle=document.getElementById('languageToggle');
   const supportCopy={
@@ -211,5 +211,31 @@ h1{font:400 clamp(54px,8vw,112px)/1.16 'Tiro Devanagari Hindi',serif;margin:8px 
   installOverlay.onclick=e=>{if(e.target===installOverlay)hideInstallApp()};
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&installOverlay.classList.contains('open'))hideInstallApp()});
   setInstallLanguage('en');</script>
+<script>
+(()=>{
+  if(location.protocol!=='http:'&&location.protocol!=='https:')return;
+  const endpoint='/.netlify/functions/track';
+  const makeId=()=>crypto.randomUUID?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2));
+  const stored=(storage,key)=>{try{let value=storage.getItem(key);if(!value){value=makeId();storage.setItem(key,value)}return value}catch{return makeId()}};
+  const visitorId=stored(localStorage,'chath-visitor-id'),sessionId=stored(sessionStorage,'chath-visit-session');
+  const send=(event)=>fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...event,visitorId}),keepalive:true}).catch(()=>{});
+  if(!sessionStorage.getItem('chath-visit-sent')){sessionStorage.setItem('chath-visit-sent','1');let referrer='';try{referrer=document.referrer?new URL(document.referrer).hostname:''}catch{}send({kind:'visit',sessionId,referrer})}
+  document.querySelectorAll('[data-apk-download]').forEach(link=>link.addEventListener('click',()=>send({kind:'apk-download'})));
+  const playerAudio=document.getElementById('audio');let currentAudioSource='',tracked=false;
+  playerAudio.addEventListener('loadedmetadata',()=>{currentAudioSource=playerAudio.currentSrc;tracked=false});
+  playerAudio.addEventListener('play',()=>{if(!tracked){tracked=true;const title=document.getElementById('title')?.textContent||'Unknown song';send({kind:'song-play',song:title})}});
+  fetch('/.netlify/functions/site-settings',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(settings=>{
+    if(!settings)return;
+    if(/^\d{4}-\d{2}-\d{2}$/.test(settings.chhathDate||'')){const parts=settings.chhathDate.split('-').map(Number);target=new Date(parts[0],parts[1]-1,parts[2],0,0,0)}
+    if(['auto','sunrise','sunset'].includes(settings.themeMode)){adminThemeMode=settings.themeMode;if(!manualOverride&&adminThemeMode!=='auto')applyTheme(adminThemeMode);else if(!manualOverride)applyTheme(autoTheme(new Date()))}
+    const profile=document.getElementById('talkLink');if(profile&&/^https:\/\/www\.instagram\.com\//.test(settings.instagramUrl||''))profile.href=settings.instagramUrl;
+    if(settings.supportQrUrl){qr.src=settings.supportQrUrl}
+    if(typeof settings.supportTextEn==='string')supportCopy.en.body=settings.supportTextEn;
+    if(typeof settings.supportTextHi==='string')supportCopy.hi.body=settings.supportTextHi;
+    setSupportLanguage(supportLanguage);
+    updateClockAndCountdown();
+  }).catch(()=>{});
+})();
+</script>
 </body>
 </html>
