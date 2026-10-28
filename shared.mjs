@@ -1,6 +1,0 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
-export const json=(data,status=200,headers={})=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store",...headers}});
-const cookieName="chath_admin";
-export function equal(a,b){const x=Buffer.from(String(a||"")),y=Buffer.from(String(b||""));return x.length===y.length&&timingSafeEqual(x,y)}
-export function cookie(){const secret=process.env.ADMIN_SESSION_SECRET;if(!secret||secret.length<32)throw new Error("ADMIN_SESSION_SECRET must be at least 32 characters");const exp=String(Date.now()+43200000),sig=createHmac("sha256",secret).update(exp).digest("base64url");return cookieName+"="+exp+"."+sig+"; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=43200"}
-export function authorized(req){const secret=process.env.ADMIN_SESSION_SECRET;if(!secret||secret.length<32)return false;const raw=req.headers.get("cookie")||"",item=raw.split(";").map(x=>x.trim()).find(x=>x.startsWith(cookieName+"="));if(!item)return false;const token=item.slice(cookieName.length+1),dot=token.indexOf(".");if(dot<1)return false;const exp=token.slice(0,dot),sig=token.slice(dot+1);if(!/^\d+$/.test(exp)||Number(exp)<Date.now())return false;return equal(sig,createHmac("sha256",secret).update(exp).digest("base64url"))}
