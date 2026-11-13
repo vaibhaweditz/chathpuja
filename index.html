@@ -16,11 +16,8 @@ body{margin:0;background:#18343a;color:var(--cream);font-family:'DM Sans',sans-s
 .shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(10,20,22,.2),transparent 24%,transparent 55%,rgba(4,22,27,.32) 100%)}
 .breeze{position:absolute;inset:20% -10% auto;height:18%;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,rgba(255,237,200,.08),transparent 70%);animation:wind 21s ease-in-out infinite alternate}
 @keyframes wind{from{transform:translateX(-1.5%) scaleX(.98);opacity:.35}to{transform:translateX(1.5%) scaleX(1.03);opacity:.7}}
-.ripples{position:absolute;left:-8%;right:-8%;bottom:12%;height:36%;pointer-events:none;overflow:hidden;mask-image:linear-gradient(180deg,transparent,#000 19%,#000 82%,transparent)}
-.ripples:before,.ripples:after{content:"";position:absolute;inset:-10% -3%;background:repeating-linear-gradient(176deg,transparent 0 16px,rgba(255,232,190,.56) 17px 18px,transparent 19px 36px);will-change:transform,opacity}
-.ripples:before{animation:waterFlow 7s ease-in-out infinite alternate}
-.ripples:after{background:repeating-linear-gradient(183deg,transparent 0 22px,rgba(255,245,218,.35) 23px 24px,transparent 25px 47px);animation:waterFlow 10s ease-in-out infinite alternate-reverse}
-@keyframes waterFlow{from{transform:translate3d(-1.2%,-10px,0) scaleY(.98);opacity:.14}to{transform:translate3d(1.2%,10px,0) scaleY(1.02);opacity:.39}}.driftlight{position:absolute;left:19%;bottom:22%;width:16px;height:9px;border-radius:50%;background:#ffd279;box-shadow:0 0 17px 8px rgba(255,190,86,.38);animation:drift 34s linear infinite;pointer-events:none}
+.day-label{position:absolute;left:250px;top:50%;transform:translateY(-50%);display:inline-block;padding:7px 16px;border:1px solid rgba(255,220,143,.52);border-radius:24px;background:rgba(44,27,12,.34);backdrop-filter:blur(8px);color:#ffd77d;font:600 13px 'DM Sans',sans-serif;letter-spacing:.12em;text-shadow:0 2px 12px #28190b;box-shadow:0 4px 20px rgba(30,17,6,.18);white-space:nowrap}
+.driftlight{position:absolute;left:19%;bottom:22%;width:16px;height:9px;border-radius:50%;background:#ffd279;box-shadow:0 0 17px 8px rgba(255,190,86,.38);animation:drift 34s linear infinite;pointer-events:none}
 .driftlight:after{content:"";position:absolute;width:4px;height:7px;left:6px;top:-6px;background:#fff0c5;border-radius:80% 0 80% 0;transform:rotate(45deg)}
 @keyframes drift{to{transform:translate3d(58vw,8px,0)}}
 header{position:absolute;z-index:2;top:0;left:0;right:0;padding:25px 5.2%;display:flex;justify-content:space-between;align-items:center}
@@ -82,15 +79,16 @@ h1{font:400 clamp(54px,8vw,112px)/1.16 'Tiro Devanagari Hindi',serif;margin:8px 
 .install-download{min-height:47px;width:min(300px,100%);display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 20px;border:1px solid rgba(255,246,220,.72);border-radius:26px;background:linear-gradient(135deg,#ffd68e,#f3ae58);box-shadow:0 8px 23px rgba(243,168,78,.22),inset 0 1px 0 rgba(255,255,255,.52);color:#3e2814;font:700 14px 'DM Sans',sans-serif;text-decoration:none;transition:filter .2s,transform .2s}
 .install-download:hover{filter:brightness(1.05);transform:translateY(-1px)}
 @media(max-width:650px){.install-app-button{margin-top:13px;padding:9px 15px;font-size:11px}.install-modal{padding:27px 19px 21px}.install-benefit{font-size:11px}}
+@media(max-width:650px){.day-label{left:50%;top:78px;transform:translateX(-50%);font-size:10px;padding:6px 11px}}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2634318471769052"
      crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="scene">
-  <img class="hero" src="./chhath-reference.png" alt="">
-  <div class="shade"></div><div class="breeze"></div><div class="ripples"></div><div class="driftlight"></div>
-  <header><div class="brand"><button class="mark" id="themeToggle" type="button" title="थीम बदलें" aria-label="थीम बदलें">☼</button><div><strong>छठ पूजा</strong><small>आस्था · अर्घ्य · अपनापन</small></div></div><div class="header-actions"><button class="prasad-button" id="openSupport" type="button">प्रसाद</button><div class="headright"><span class="live" id="journey">संध्या का सफ़र</span><time id="clock" class="clock" aria-label="स्थानीय समय"></time></div></div></header>
+ <img class="hero" src="./nhaykhay.png" alt="">
+ <div class="shade"></div><div class="breeze"></div><div class="driftlight"></div>
+  <header><div class="brand"><button class="mark" id="themeToggle" type="button" title="थीम बदलें" aria-label="थीम बदलें">☼</button><div><strong>छठ पूजा</strong><small>आस्था · अर्घ्य · अपनापन</small></div></div><div class="day-label">Day 1 of Chhath Puja</div><div class="header-actions"><button class="prasad-button" id="openSupport" type="button">प्रसाद</button><div class="headright"><span class="live" id="journey">संध्या का सफ़र</span><time id="clock" class="clock" aria-label="स्थानीय समय"></time></div></div></header>
 <div class="support-overlay" id="supportOverlay" aria-hidden="true">
   <section class="support-modal" role="dialog" aria-modal="true" aria-labelledby="supportTitle">
     <button class="support-close" id="closeSupport" type="button" aria-label="Close">×</button>
@@ -179,7 +177,7 @@ h1{font:400 clamp(54px,8vw,112px)/1.16 'Tiro Devanagari Hindi',serif;margin:8px 
   const scene=document.querySelector('.scene'),hero=document.querySelector('.hero'),journey=document.getElementById('journey');
   let currentTheme=null,manualOverride=false,adminThemeMode='auto';
   function autoTheme(now){return now.getHours()<12||(now.getHours()===12&&now.getMinutes()===0)?'sunrise':'sunset'}
-  function applyTheme(theme){currentTheme=theme;scene.dataset.theme=theme;hero.dataset.theme=theme;hero.style.display='';hero.src=theme==='sunrise'?'./chhath-sunrise.png':'./chhath-reference.png';journey.textContent=theme==='sunrise'?'प्रातः का सफ़र':'संध्या का सफ़र'}
+ function applyTheme(theme){currentTheme=theme;scene.dataset.theme=theme;hero.dataset.theme=theme;hero.style.display='';hero.src=matchMedia('(max-width:650px)').matches?'./nhaykhaymobile.png':'./nhaykhay.png';journey.textContent=theme==='sunrise'?'प्रातः का सफ़र':'संध्या का सफ़र'}
   hero.onerror=()=>{if(currentTheme==='sunrise'&&hero.getAttribute('src')==='chhath-sunrise.png')hero.style.display='none'};
   document.getElementById('themeToggle').onclick=()=>{manualOverride=true;applyTheme(currentTheme==='sunrise'?'sunset':'sunrise')};
   let target=new Date(2026,10,15,0,0,0);
