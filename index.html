@@ -119,7 +119,7 @@ h1{font:400 clamp(54px,8vw,112px)/1.16 'Tiro Devanagari Hindi',serif;margin:8px 
     </div>
   </section>
 </div>
-  <main><div class="eyebrow">लोक आस्था · लोक संगीत · घर की याद</div><h1>छठ पूजा</h1><p class="subtitle">सूर्य को अर्घ्य · मन में आस्था</p><div class="blessing">सूर्य देव सबके जीवन में सुख-शांति भरें</div><button class="install-app-button" id="openInstallApp" type="button"><span>↓</span><span>Install App</span></button></main>
+  <main><button class="install-app-button" id="openInstallApp" type="button"><span>↓</span><span>Install App</span></button></main>
   <div class="countdown"><span>छठ पूजा में</span><strong id="countdown">गिनती हो रही है…</strong></div>
   <footer class="madeby">Made by Vbw</footer>
   <section class="playerwrap" aria-label="संगीत प्लेयर">
@@ -182,7 +182,7 @@ h1{font:400 clamp(54px,8vw,112px)/1.16 'Tiro Devanagari Hindi',serif;margin:8px 
  addEventListener('resize',setSeasonBackground,{passive:true});
   hero.onerror=()=>{if(currentTheme==='sunrise'&&hero.getAttribute('src')==='chhath-sunrise.png')hero.style.display='none'};
   document.getElementById('themeToggle').onclick=()=>{manualOverride=true;applyTheme(currentTheme==='sunrise'?'sunset':'sunrise')};
-  let target=new Date(2026,10,15,0,0,0);
+ let target=new Date(2027,10,4,0,0,0);
  function updateClockAndCountdown(){const now=new Date();document.getElementById('clock').textContent=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});if(!manualOverride){const scheduled=adminThemeMode==='auto'?autoTheme(now):adminThemeMode;if(scheduled!==currentTheme)applyTheme(scheduled)}const left=Math.max(0,target-now);if(left===0){document.getElementById('countdown').textContent='आज छठ पूजा है 🙏';return}const days=Math.floor(left/86400000),hours=Math.floor(left%86400000/3600000),minutes=Math.floor(left%3600000/60000),seconds=Math.floor(left%60000/1000);document.getElementById('countdown').textContent=days+' दिन · '+String(hours).padStart(2,'0')+' घंटे · '+String(minutes).padStart(2,'0')+' मिनट · '+String(seconds).padStart(2,'0')+' सेकंड'}
   updateClockAndCountdown();setInterval(updateClockAndCountdown,1000);
   const overlay=document.getElementById('supportOverlay'),openSupport=document.getElementById('openSupport'),closeSupport=document.getElementById('closeSupport'),qr=document.getElementById('supportQr'),qrPlaceholder=document.getElementById('qrPlaceholder'),languageToggle=document.getElementById('languageToggle');
@@ -226,7 +226,7 @@ h1{font:400 clamp(54px,8vw,112px)/1.16 'Tiro Devanagari Hindi',serif;margin:8px 
   playerAudio.addEventListener('play',()=>{if(!tracked){tracked=true;const title=document.getElementById('title')?.textContent||'Unknown song';send({kind:'song-play',song:title})}});
   fetch('/.netlify/functions/site-settings',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(settings=>{
     if(!settings)return;
-    if(/^\d{4}-\d{2}-\d{2}$/.test(settings.chhathDate||'')){const parts=settings.chhathDate.split('-').map(Number);target=new Date(parts[0],parts[1]-1,parts[2],0,0,0)}
+    if(/^\d{4}-\d{2}-\d{2}$/.test(settings.chhathDate||'')){const parts=settings.chhathDate.split('-').map(Number),configured=new Date(parts[0],parts[1]-1,parts[2],0,0,0);if(configured>=new Date(2027,10,4,0,0,0))target=configured}
     if(['auto','sunrise','sunset'].includes(settings.themeMode)){adminThemeMode=settings.themeMode;if(!manualOverride&&adminThemeMode!=='auto')applyTheme(adminThemeMode);else if(!manualOverride)applyTheme(autoTheme(new Date()))}
     const profile=document.getElementById('talkLink');if(profile&&/^https:\/\/www\.instagram\.com\//.test(settings.instagramUrl||''))profile.href=settings.instagramUrl;
     if(settings.supportQrUrl){qr.src=settings.supportQrUrl}
