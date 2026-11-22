@@ -86,9 +86,9 @@ h1{font:400 clamp(54px,8vw,112px)/1.16 'Tiro Devanagari Hindi',serif;margin:8px 
 </head>
 <body>
 <div class="scene">
-  <img class="hero" src="./kharna.png" alt="">
+  <img class="hero" src="./chath2027dekstop.png" alt="">
  <div class="shade"></div><div class="breeze"></div><div class="driftlight"></div>
-  <header><div class="brand"><button class="mark" id="themeToggle" type="button" title="थीम बदलें" aria-label="थीम बदलें">☼</button><div><strong>छठ पूजा</strong><small>आस्था · अर्घ्य · अपनापन</small></div></div><div class="day-label">Day 2 of Chhath Puja</div><div class="header-actions"><button class="prasad-button" id="openSupport" type="button">प्रसाद</button><div class="headright"><span class="live" id="journey">संध्या का सफ़र</span><time id="clock" class="clock" aria-label="स्थानीय समय"></time></div></div></header>
+  <header><div class="brand"><button class="mark" id="themeToggle" type="button" title="थीम बदलें" aria-label="थीम बदलें">☼</button><div><strong>छठ पूजा</strong><small>आस्था · अर्घ्य · अपनापन</small></div></div><div class="day-label">Chhath Puja 2027</div><div class="header-actions"><button class="prasad-button" id="openSupport" type="button">प्रसाद</button><div class="headright"><span class="live" id="journey">संध्या का सफ़र</span><time id="clock" class="clock" aria-label="स्थानीय समय"></time></div></div></header>
 <div class="support-overlay" id="supportOverlay" aria-hidden="true">
   <section class="support-modal" role="dialog" aria-modal="true" aria-labelledby="supportTitle">
     <button class="support-close" id="closeSupport" type="button" aria-label="Close">×</button>
@@ -177,11 +177,13 @@ h1{font:400 clamp(54px,8vw,112px)/1.16 'Tiro Devanagari Hindi',serif;margin:8px 
   const scene=document.querySelector('.scene'),hero=document.querySelector('.hero'),journey=document.getElementById('journey');
   let currentTheme=null,manualOverride=false,adminThemeMode='auto';
   function autoTheme(now){return now.getHours()<12||(now.getHours()===12&&now.getMinutes()===0)?'sunrise':'sunset'}
- function applyTheme(theme){currentTheme=theme;scene.dataset.theme=theme;hero.dataset.theme=theme;hero.style.display='';hero.src=matchMedia('(max-width:650px)').matches?'./kharnamobile.png':'./kharna.png';journey.textContent=theme==='sunrise'?'प्रातः का सफ़र':'संध्या का सफ़र'}
+ function setSeasonBackground(){hero.src=matchMedia('(max-width:650px)').matches?'./chath2027mobile.png':'./chath2027dekstop.png'}
+ function applyTheme(theme){currentTheme=theme;scene.dataset.theme=theme;hero.dataset.theme=theme;hero.style.display='';setSeasonBackground();journey.textContent=theme==='sunrise'?'प्रातः का सफ़र':'संध्या का सफ़र'}
+ addEventListener('resize',setSeasonBackground,{passive:true});
   hero.onerror=()=>{if(currentTheme==='sunrise'&&hero.getAttribute('src')==='chhath-sunrise.png')hero.style.display='none'};
   document.getElementById('themeToggle').onclick=()=>{manualOverride=true;applyTheme(currentTheme==='sunrise'?'sunset':'sunrise')};
   let target=new Date(2026,10,15,0,0,0);
-  function updateClockAndCountdown(){const now=new Date();document.getElementById('clock').textContent=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});if(!manualOverride){const scheduled=adminThemeMode==='auto'?autoTheme(now):adminThemeMode;if(scheduled!==currentTheme)applyTheme(scheduled)}const left=Math.max(0,target-now);if(left===0){document.getElementById('countdown').textContent='आज छठ पूजा है 🙏';return}const days=Math.floor(left/86400000),hours=Math.floor(left%86400000/3600000),minutes=Math.floor(left%3600000/60000),seconds=Math.floor(left%60000/1000);document.getElementById('countdown').textContent=days+' दिन · '+String(hours).padStart(2,'0')+' घंटे · '+String(minutes).padStart(2,'0')+' मिनट · '+String(seconds).padStart(2,'0')+' सेकंड'}
+ function updateClockAndCountdown(){const now=new Date();document.getElementById('clock').textContent=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});if(!manualOverride){const scheduled=adminThemeMode==='auto'?autoTheme(now):adminThemeMode;if(scheduled!==currentTheme)applyTheme(scheduled)}const left=Math.max(0,target-now);if(left===0){document.getElementById('countdown').textContent='आज छठ पूजा है 🙏';return}const days=Math.floor(left/86400000),hours=Math.floor(left%86400000/3600000),minutes=Math.floor(left%3600000/60000),seconds=Math.floor(left%60000/1000);document.getElementById('countdown').textContent=days+' दिन · '+String(hours).padStart(2,'0')+' घंटे · '+String(minutes).padStart(2,'0')+' मिनट · '+String(seconds).padStart(2,'0')+' सेकंड'}
   updateClockAndCountdown();setInterval(updateClockAndCountdown,1000);
   const overlay=document.getElementById('supportOverlay'),openSupport=document.getElementById('openSupport'),closeSupport=document.getElementById('closeSupport'),qr=document.getElementById('supportQr'),qrPlaceholder=document.getElementById('qrPlaceholder'),languageToggle=document.getElementById('languageToggle');
   const supportCopy={
